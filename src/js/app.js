@@ -1,14 +1,7 @@
-import { CardFactory } from "./card";
+import { CardController } from "./card-controller";
 
-const cardFactory = new CardFactory();
+const cardFactory = new CardController();
 
 if (localStorage.cardsData) {
   cardFactory.loadCardsData();
-}
-
-let addCardButtons = document.querySelectorAll(".group__add-card-button");
-for (let addCardButton of addCardButtons) {
-  addCardButton.addEventListener("click", () => {
-    cardFactory.addTo(addCardButton.parentElement);
-  });
 }
