@@ -1,7 +1,7 @@
 import { CardController } from "./card-controller";
 
-const cardFactory = new CardController();
+const registeredCardController = new CardController();
 
 if (localStorage.cardsData) {
-  cardFactory.loadCardsData();
+  registeredCardController.loadCardsData();
 }
