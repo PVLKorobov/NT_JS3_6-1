@@ -8,6 +8,7 @@ class CardController {
     this.deltaX;
     this.deltaY;
     this.underCard = null;
+    this.underGroup = null;
     this.lastValidPosStatus;
 
     this.saveTimeout = null;
@@ -21,7 +22,7 @@ class CardController {
       this.moveHeldCardTo(event.clientX, event.clientY);
     });
     document.addEventListener("mouseup", (event) => {
-      this.dropHeldCard(event.clientX, event.clientY);
+      this.dropHeldCard(event.clientY);
     });
   }
 
@@ -169,6 +170,11 @@ class CardController {
       targetCardLI.after(heldCardLI);
     }
   }
+  insertHeldCardInto(targetGroup) {
+    const heldCardLI = this.heldCard.parentElement;
+    const targetGroupUL = targetGroup.querySelector(".group__card-list");
+    targetGroupUL.appendChild(heldCardLI);
+  }
 
   pickUpCardAtCursor(clientX, clientY) {
     if (!this.heldCard) {
@@ -189,6 +195,20 @@ class CardController {
 
       const underCard = this.getCardAtPos(clientX, clientY);
       const underGroup = this.getGroupAtPos(clientX, clientY);
+
+      if (underGroup) {
+        if (this.underGroup) {
+          if (this.underGroup != underGroup) {
+            if (this.underCard) {
+              this.collapseSpaceAroundUnderCard();
+              this.underCard = null;
+            }
+          }
+        }
+
+        this.underGroup = underGroup;
+      }
+
       if (underCard) {
         if (this.underCard) {
           this.collapseSpaceAroundUnderCard();
@@ -210,13 +230,17 @@ class CardController {
         this.insertHeldCardAt(this.underCard, clientY);
         this.collapseSpaceAroundUnderCard();
         this.underCard = null;
+      } else if (this.underGroup) {
+        this.insertHeldCardInto(this.underGroup);
       }
+
       this.removeHeldCardStyles();
       this.activateHeldCardTitle();
       document.body.style.removeProperty("cursor");
       this.heldCard = null;
+      this.underCard = null;
 
-      this.startSaveTimeout();
+      this.saveCardsData();
     }
   }
 }
